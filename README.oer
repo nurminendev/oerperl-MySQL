@@ -1,0 +1,23 @@
+oer is a free to use GPL'd (see COPYING) IRC bot written in C by EQU
+<equ@equnet.org>.
+
+oer has been tested to work on EQUNet, Quakenet, Ircnet, Efnet,
+Undernet, Dalnet and Gamesnet. The program is provided as is, no
+support is given.
+
+YOU RUN OER AT YOUR OWN RISK, I TAKE NO RESPONSABILITY ABOUT WHAT
+POSSIBLE DAMAGE/HARM IT MAY CAUSE YOU.
+
+For installation instructions, see INSTALL. For licensing/usage terms
+see COPYING.
+
+For latest versions/information goto http://oer.equnet.org.
+
+To find out what has changed between different oer versions see
+CHANGELOG.
+
+For sending bug reports see BUGREPORTING. Before suggesting a new
+feature, see TODO.
+
+The people that have in some way contributed in the development and/or
+testing of oer are listed in THANKS.

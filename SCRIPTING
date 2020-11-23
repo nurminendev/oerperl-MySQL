@@ -1,0 +1,5 @@
+This version of oer+MySQL supports Perl scripting.
+
+See http://www.rakkis.net/projects/oerperl/ for more information about
+the scripting interface and for the OerPerl manual, API reference, and example
+scripts.

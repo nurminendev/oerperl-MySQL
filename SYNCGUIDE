@@ -1,0 +1,136 @@
+Since oer+MySQL 1.0-39 it is possible to have a shared oer+MySQL setup
+(sharing of admins and/or users between two or more oer+MySQL
+instances) mainly in two different ways.
+
+Connecting to a remote database (the old way)
+---------------------------------------------
+
+In this setup the admins and/or users are always read from the MySQL
+database which is indicated in oer+MySQL.conf with
+
+	mysql::irc1.equnet.org::oer::oer::mysecret
+
+The format of this line is
+
+	mysql::<hostname>::<database>::<user>::<password>
+
+This allows you to use a remote (or local) database to read admins
+and/or users. Since sometimes it makes sense to have different
+settings for each of the oer+MySQL instances you can extend this setup
+by specifying a alternate ident. That way admins and/or users are read
+from the database with the specified ident. You would do this by
+starting oer+MySQL with the command line parameters -a and/or -u
+
+	-a <oer+MySQL ident for getting admins>
+	-u <oer+MySQL ident for getting users>
+
+A oer+MySQL ident uniquely identifies one oer+MySQL instance.
+
+EXAMPLE
+	MySQL running on irc1.equnet.org, database oer & user oer
+	1 oer+MySQL running on irc1.equnet.org with ident oerequnet1
+	1 oer+MySQL running on irc2.equnet.org with ident oerequnet2
+
+- on irc1.equnet.org oer+MySQL.conf would point to irc1.equnet.org
+        mysql::irc1.equnet.org::oer::oer::mysecret
+  and oer+MySQL would be started without any commandline parameters
+
+- on irc2.equnet.org oer+MySQL.conf would point to irc2.equnet.org
+        mysql::irc2.equnet.org::oer::oer::mysecret
+  and oer+MySQL would be started with -a oerequnet1 and/or -u oerequnet1
+
+Remember that you will have to GRANT ACCESS to all the hosts used to
+connect to MySQL (local or remote). In this example on irc1.equnet.org
+you would have to grant at least read permission on the oer database
+to oer@irc2.equnet.org.
+
+PROS AND CONS
+	+ easy to maintain (you just setup one MySQL database and
+	  point all of the oer+MySQL instances there)
+	- the admin and/or user database gets polled each 10 seconds
+	  so that oer+MySQL will notice the changed admin and/or user
+	  data and re-read the data from the database
+	- the same database (local or remote) is used for everything
+	  (you can only specify the admins and/or users which should
+	  be read by giving a alternative ident with -a and/or -u)
+	- requires a reliable network connection in remote case
+	- high bandwidth requirements in the remote case
+
+Getting admins and/or users from a remote database (the new way)
+----------------------------------------------------------------
+
+In this setup the database which is used to read admins and/or users
+doesn't have to be the same as the one used for the oer+MySQL instance
+in question.  The admins and/or users database can either be remote or
+local. The admin database is indicated in oer+MySQL.conf with
+
+	mysqladmins::irc1.equnet.org::oer::oer::mysecret
+
+and the user database with
+
+	mysqlusers::irc1.equnet.org::oer::oer::mysecret
+
+Since sometimes it makes sense to have different settings for each of
+the oer+MySQL instances you can extend this setup by specifying a
+alternate ident. That way admins and/or users are read from the
+database with the specified ident. You would do this by starting
+oer+MySQL with the command line parameters -a and/or -u
+
+	-a <oer+MySQL ident for getting admins>
+	-u <oer+MySQL ident for getting users>
+
+A oer+MySQL ident uniquely identifies one oer+MySQL instance.
+
+EXAMPLE
+	MySQL running on irc1.equnet.org, database oer & user oer
+	MySQL running on irc2.equnet.org, database oer & user oer
+	1 oer+MySQL running on irc1.equnet.org with ident oerequnet1
+	1 oer+MySQL running on irc2.equnet.org with ident oerequnet2
+
+- on irc1.equnet.org oer+MySQL.conf would point to irc1.equnet.org
+        mysql::irc1.equnet.org::oer::oer::mysecret
+  and oer+MySQL would be started without any commandline parameters
+
+- on irc2.equnet.org oer+MySQL.conf would point to irc2.equnet.org
+        mysql::irc2.equnet.org::oer::oer::mysecret
+  and oer+MySQL would be started with -a oerequnet1 and/or -u oerequnet1
+
+- additionally on irc2.equnet.org oer+MySQL.conf would have the
+  following entries:
+	mysqladmins::irc1.equnet.org::oer::oer::mysecret
+	mysqlusers::irc1.equnet.org::oer::oer::mysecret
+  This tells oer+MySQL to fetch it's admins and users from irc1
+
+Remember that you will have to GRANT ACCESS to all the hosts used to
+connect to MySQL (local or remote). In this example on irc1.equnet.org
+you would have to grant at least read permission on the oer database
+to oer@irc2.equnet.org.
+
+Other setups with same/different idents, local but different
+databases, etc. are all possible but I won't list them all here.
+
+PROS AND CONS
+	+ the admin and/or user database gets only polled each
+	  300 seconds because there is additional functionality
+	  since 1.0-39 so that oer+My notices the changed admin
+	  and/or user data
+	+ lower bandwidth requirement in the remote case (admins
+	  and/or users are read only on initial startup or when
+	  the data changes, everything else is, or should be, local)
+	- hard to maintain (you will have to setup a oer+MySQL
+	  database or at least a oer+MySQL ident for each of the
+	  oer+MySQL instances)
+
+Some general notices
+--------------------
+
+In both setups beginning with 1.0-34 you should add your oer+MySQL
+instances as channel users with "os" user flags (the "s" is of crucial
+importance here).
+
+EXAMPLE
+	#oer user "oer", flags "os", hostmask "oer@*.equnet.org"
+
+Also, beginning with 1.0-39 you should also set the global flag "S" to
+indicate a shared oer+MySQL setup (controls the polling of admin
+and/or user timestamps).

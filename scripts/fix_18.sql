@@ -1,0 +1,15 @@
+alter table banvars modify channel varchar(64) NOT NULL default '';
+alter table floodvars modify channel varchar(64) NOT NULL default '';
+update hostmasks set channel = '-' where channel = '';
+alter table hostmasks modify channel varchar(64) NOT NULL default '';
+alter table hostmasks modify handle varchar(32) NOT NULL default '';
+alter table passwords modify channel varchar(64) NOT NULL default '';
+alter table passwords modify handle varchar(32) NOT NULL default '';
+alter table permbans modify channel varchar(64) NOT NULL default '';
+update timestamps set tchannel = '-' where tchannel = '';
+alter table timestamps modify tchannel varchar(64) NOT NULL default '';
+alter table trusted change hostmask host varchar(64) NOT NULL default '';
+alter table users modify channel varchar(64) NOT NULL default '';
+alter table users modify handle varchar(32) NOT NULL default '';
+alter table conf drop primary key;
+alter table conf add key key1(ident);

@@ -1,0 +1,23 @@
+oerperl README
+==============
+
+oerperl is a perl-scriptable IRC bot based on oer. It adds three commands to
+the oer commandset that can be used to add/del/list perl scripts.
+
+oerperl exposes the oer internals to your perl script via its perl API. With it
+you can: 
+
+    - Receive irc events by registering eventhandlers
+    - Register timers that are executed at specified intervals
+    - Implement your own oer commands (either new or override the existing) by
+      means of command handlers
+
+oerperl requires Perl 5.002 or newer to run. To compile it you'll also need the
+perl development libraries and headers and the ExtUtils::Embed perl module.
+
+oerperl was written and is maintained by Riku Nurminen
+
+For more information, including the oerperl User Manual, API Reference and
+example scripts, see the oerperl homepage at:
+
+    https://vanhat.rikunmediatuotanto.fi/oerperl/

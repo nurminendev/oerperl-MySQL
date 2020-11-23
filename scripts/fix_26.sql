@@ -1,0 +1,16 @@
+CREATE TABLE last (
+  channel VARCHAR(50) NOT NULL,
+  nick VARCHAR(20) NOT NULL,
+  twhen INT UNSIGNED NOT NULL,
+  hostmask VARCHAR(80) NOT NULL,
+  message TEXT NOT NULL,
+  INDEX (channel,nick)
+) TYPE=MyISAM PACK_KEYS=1;
+CREATE TABLE seen (
+  channel VARCHAR(50) NOT NULL,
+  nick VARCHAR(20) NOT NULL,
+  twhen INT UNSIGNED NOT NULL,
+  hostmask VARCHAR(80) NOT NULL,
+  INDEX (channel,nick)
+) TYPE=MyISAM PACK_KEYS=1;
+ALTER TABLE channels ADD chanlimit VARCHAR(32) DEFAULT '';

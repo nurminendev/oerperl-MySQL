@@ -1,0 +1,28 @@
+If you want to help in the development and/or testing of oer+MySQL you
+can do the following:
+
+- Send me bug reports even if you are not 100% sure whether they are
+  real bugs or just features
+
+- Send me profiling information of oer+MySQL runs (configure with
+  --enable-debug --enable-profile, let oer+MySQL run as long as
+  possible then order the bot to quit and gather the profiling
+  information with "gprof oer+MySQL gmon.out > prof" and send me prof
+
+- Spread out the word, the wider oer+MySQL's userbase gets the higher
+  the quality of the bot will eventually get
+
+- Come and visit EQUNet (the IRC Network) at irc.equnet.org and perhaps
+  stay, goto http://www.equnet.org for details
+
+- I would appreciate if anyone who knows perl well would have a look
+  at pisg's (http://pisg.sf.net) oer support (oer.pm) and finish it so
+  that even the example sayings/etc. work
+
+- If you are a native Italian or speak fluently italian, I would
+  appriciate it a lot if you would ask the owner of the oer.org domain
+  Matteo Salvestrini <salve@CONMET.IT> whether he intends to release
+  the domain some day and at what terms
+
+- If your oer+MySQL bot has been running for longer than 100 days,
+  report your uptime to me! http://oer.equnet.org/uptime.php

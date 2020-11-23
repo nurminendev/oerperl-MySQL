@@ -1,0 +1,46 @@
+Pre-installation requirements
+
+	- One of the supported UNIX platforms
+	- MySQL client installed (+ includes/libraries)
+	- Access to a local/remote MySQL 3.23.xx database
+
+Step 1
+------
+
+  "./configure"
+
+or append --with-mysql=<path> if MySQL is not installed in
+/usr/local/mysql. You also have --with-mysqlinc, --with-mysqllib and
+--with-mysqlbin directives if your MySQL includes, libraries and
+binaries do not share the same parent directory.
+
+You can specify the destination dir with --prefix. It defaults to
+$HOME/oer+MySQL. You can also specify --enable-debug to switch on
+debugging. (+ add debug symbols to the oer+MySQL binary, enlarges size
+by 70%) Specify --disable-opt to de-activate
+optimization. (--enable-debug does this automatically) Also, you can
+specify --enable-profile if you want to enable profiling in the
+oer+MySQL binary.
+
+Step 2
+------
+
+  "make"
+
+Step 3
+------
+
+  "make install"
+
+The database and it's tables are created and filled with initial
+data. Also, the oer+MySQL binary and a oer+MySQL sample configuration
+is placed in the directory specified by --prefix. (defaults to
+$HOME/oer+MySQL)
+
+Step 4
+------
+
+You are done. Start oer+MySQL by invoking "./oer+MySQL" in the
+installation directory. (most likely $HOME/oer+MySQL)
+
+If you wish, you can remove the oer+MySQL-dist directory.

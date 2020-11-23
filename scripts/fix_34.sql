@@ -1,0 +1,57 @@
+ALTER TABLE admins RENAME oer_admins;
+ALTER TABLE adverts RENAME oer_adverts;
+ALTER TABLE bantype RENAME oer_bantype;
+ALTER TABLE banvars RENAME oer_banvars;
+ALTER TABLE channels RENAME oer_channels;
+ALTER TABLE conf RENAME oer_conf;
+ALTER TABLE floodvars RENAME oer_floodvars;
+ALTER TABLE hostmasks RENAME oer_hostmasks;
+ALTER TABLE kickreasons RENAME oer_kickreasons;
+ALTER TABLE last RENAME oer_last;
+ALTER TABLE nickbks RENAME oer_nickbks;
+ALTER TABLE output RENAME oer_output;
+ALTER TABLE passwords RENAME oer_passwords;
+ALTER TABLE permbans RENAME oer_permbans;
+ALTER TABLE raw RENAME oer_raw;
+ALTER TABLE seen RENAME oer_seen;
+ALTER TABLE servers RENAME oer_servers;
+ALTER TABLE services RENAME oer_services;
+ALTER TABLE timestamps RENAME oer_timestamps;
+ALTER TABLE topics RENAME oer_topics;
+ALTER TABLE trusted RENAME oer_trusted;
+ALTER TABLE users RENAME oer_users;
+ALTER TABLE wordbks RENAME oer_wordbks;
+#
+ALTER TABLE oer_last ADD ident VARCHAR(64) NOT NULL AFTER hostmask;
+ALTER TABLE oer_last DROP INDEX channel;
+ALTER TABLE oer_last ADD INDEX (channel,nick,ident);
+#
+ALTER TABLE oer_seen ADD ident VARCHAR(64) NOT NULL AFTER hostmask;
+ALTER TABLE oer_seen DROP INDEX channel;
+ALTER TABLE oer_seen ADD INDEX (channel,nick,ident);
+#
+ALTER TABLE oer_admins CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_adverts CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_bantype CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_banvars CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_channels CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_conf CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_floodvars CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_hostmasks CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_kickreasons CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_last CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_nickbks CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_output CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_passwords CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_permbans CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_raw CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_seen CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_servers CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_services CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_timestamps CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_topics CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_trusted CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_users CHANGE ident ident VARCHAR(20) NOT NULL;
+ALTER TABLE oer_wordbks CHANGE ident ident VARCHAR(20) NOT NULL;
+#
+ALTER TABLE oer_conf ADD proxysetup VARCHAR(128) DEFAULT '' AFTER qpassword;

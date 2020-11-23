@@ -1,0 +1,2 @@
+#undef SOURCE_LINES
+#undef SOURCE_CHARS

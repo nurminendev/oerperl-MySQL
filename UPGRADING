@@ -1,0 +1,17 @@
+- Always read the attached CHANGLOG for any important changes between
+  versions.
+
+- If you are upgrading from any previous version of oer+MySQL you will
+  have to run all needed MySQL fix_*.sql scripts in the scripts
+  subdirectory.
+
+- An example: If you are upgrading from version 1.0-22 to version
+  1.0-26 you would run the following MySQL scripts: fix_25.sql and
+  fix_26.sql, in that order.
+
+- Invoke "make install" and answer "n" to all 3 questions.
+
+- "make install" will simply place the new oer+MySQL binary to the
+  destination directory. You could also copy the "oer+MySQL" over.
+
+- You are done.

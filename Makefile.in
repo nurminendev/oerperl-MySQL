@@ -1,0 +1,58 @@
+prefix		=	@prefix@
+CC		=	@CC@
+LDFLAGS		=	@LDFLAGS@
+LIBS		=	@LIBS@
+CFLAGS		=	@CPPFLAGS@ @CFLAGS@
+ALWAYSDEP	=	config.h Makefile
+OBJS		=	ds.o misc.o network.o oer+MySQL.o parse.o perl.o reg.o
+MYSQL_PATH_INC	=	@MYSQL_PATH_INC@
+MYSQL_PATH_LIB	=	@MYSQL_PATH_LIB@
+MYSQL_PATH_BIN	=	@MYSQL_PATH_BIN@
+all:			oer+MySQL
+oer+MySQL:		$(ALWAYSDEP) $(OBJS) mycrypt.o
+			$(CC) $(LDFLAGS) -o oer+MySQL $(OBJS) $(LIBS)
+			@echo ""
+			@echo "  Type \"make install\" to install oer+MySQL into $(prefix)"
+			@echo ""
+mycrypt:		$(ALWAYSDEP) mycrypt.o
+			$(CC) $(LDFLAGS) -o mycrypt mycrypt.o $(LIBS)
+oer+MySQL.o:		$(ALWAYSDEP) oer+MySQL.c oer+MySQL.h oer+MySQL-common.h ds.o network.o misc.o perl.o
+
+			$(CC) $(CFLAGS) -c oer+MySQL.c
+mycrypt.o:		$(ALWAYSDEP) mycrypt.c
+			$(CC) $(CFLAGS) -c mycrypt.c
+ds.o:			$(ALWAYSDEP) ds.c ds.h oer+MySQL-common.h oer+MySQL.h misc.o reg.o
+			$(CC) $(CFLAGS) -c ds.c
+reg.o:			$(ALWAYSDEP) reg.c reg.h
+			$(CC) $(CFLAGS) -c reg.c
+misc.o:			$(ALWAYSDEP) misc.c misc.h oer+MySQL-common.h oer+MySQL.h
+			$(CC) $(CFLAGS) -c misc.c
+network.o:		$(ALWAYSDEP) network.c network.h oer+MySQL-common.h oer+MySQL.h parse.o ds.o misc.o
+			$(CC) $(CFLAGS) -c network.c
+parse.o:		$(ALWAYSDEP) parse.c parse.h oer+MySQL-common.h oer+MySQL.h ds.o misc.o reg.o
+			$(CC) $(CFLAGS) -c parse.c
+perl.o:			$(ALWAYSDEP) perl.c perl.h oer+MySQL-common.h oer+MySQL.h misc.o ds.o
+			$(CC) $(CFLAGS) -c perl.c
+install:		all
+			@if [ -f sample-configuration/oer+MySQL.conf ]; then \
+				mv -f sample-configuration/oer+MySQL.conf sample-configuration/oer+MySQL.conf.bak; \
+			fi
+			@./pre_install.sh $(MYSQL_PATH_BIN)
+			@if [ ! -d $(prefix) ]; then \
+				echo Creating directory $(prefix); \
+				mkdir -p $(prefix)/scripts; \
+			fi
+			@echo Installing oer+MySQL binary into directory $(prefix)
+			@@INSTALL@ -m 755 oer+MySQL $(prefix)
+			@if [ -f sample-configuration/oer+MySQL.conf ]; then \
+				echo Copying sample configuration into $(prefix); \
+				@INSTALL@ -m 644 sample-configuration/oer+MySQL.conf $(prefix); \
+			fi
+			@echo ""
+			@echo "  Type \"./oer+MySQL\" in $(prefix) to start oer+MySQL"
+			@echo ""
+.PHONY:			clean distclean
+clean:
+			-rm -f oer+MySQL *.o
+distclean:
+			-rm -f oer+MySQL *.o Makefile config.cache config.h config.log config.status sample-configuration/oer+MySQL.conf

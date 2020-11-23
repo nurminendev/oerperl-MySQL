@@ -1,0 +1,23 @@
+This document is supposed to give you some guidelines in porting
+oer+MySQL to another RDBMS such as Oracle, Postgress, Sybase, etc.
+
+1) The database and it's objects are created with the pre_install.sh
+script in the "make install" phase of the installation. You can use
+mysqldump to get out the complete database for closer
+analyzation. Alternatively, you can look at scripts/initial.sql and
+the INSERT statements in pre_install.sh.
+
+2) The database connection is created once oer+MySQL is started.
+loadconf() takes care of filling the fields of mystate->mysqldb from
+the config file which is read at startup. The database connection
+itself is built in oer+MySQL.c after loadconf().
+
+3) All database queries go through oer_doquery(). Grepping the source
+for oer_doquery should reveal all places where the database interface
+is being called.
+
+4) The contents of the SQL queries passed to oer_doquery() are built
+with MySQL in mind. It is very possible that the target RDBMS is
+different from MySQL, hence further modifications might be necessary.
+
+- Good luck and let me know when you come up with something!

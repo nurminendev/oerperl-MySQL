@@ -1,0 +1,19 @@
+
+All scripts in this directory write MySQL commands on the standard
+output. You can either pipe the result of the scripts directly to
+MySQL or redirect the output to a file and then feed that to MySQL.
+
+Examples:
+
+Pipe directly to MySQL
+----------------------
+
+# ./delident.pl oer | mysql -u oer -p oerdb
+
+
+Store in a file, then feed MySQL
+--------------------------------
+
+# ./delident.pl oer > delident.sql
+# mysql -u oer -p oerdb < delident.sql
+

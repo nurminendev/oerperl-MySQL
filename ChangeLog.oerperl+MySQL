@@ -1,0 +1,12 @@
+oerperl+MySQL 1.0.1
+---------------------------------------------------------------------------
+
+    - 'list scripts' now correctly requires only channel operator access
+
+    - Added README.oerperl
+
+
+oerperl+MySQL 1.0
+---------------------------------------------------------------------------
+
+    - Initial release.

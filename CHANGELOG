@@ -1,0 +1,943 @@
+1.0-42
+------
+
+- Rewrote the IRC client protocol parser due the PART issue
+  discovered in -41 (this change could break just about
+  anything!)
+- Improved the channel mode, channel key and channel limit
+  parsing in oer+MySQL (there is still room for improvement)
+- Improved the socket family detection so that oer+MySQL
+  should no longer attempt to connect to a IPv4 address from
+  a IPv6 address and visa versa
+  (Thanks must go to Renzo)
+- Scheduled modes weren't adjusted when there was a nick
+  change for a nick for which a scheduled mode existed, fixed
+- Fixed yet another IPv4 <-> IPv6 interoperatibility issue
+  (Thanks must go to Emperor)
+- There was a missplaced freeaddrinfo() in network.c
+  (Thanks must go to Lasse Lehtinen)
+- Added Operating System information to CTCP VERSION if
+  supported (shown only to bot users)
+- Configure now checks for the availability of getaddrinfo()
+- dbconnect didn't actually reconnect to the database since
+  mysql_ping() doesn't automatically attempt a reconnection
+  (Thanks must go to Sekto)
+- dbconnect didn't check all MySQL connections, fixed
+- oer+MySQL will now attempt to re-establish a broken MySQL
+  connection in 10 minute intervals, not 30
+- When the database connection has been disconnected oer+MySQL
+  will no longer attempt to clean expired autheds until the
+  database connection is available again
+- I fixed a long lasting error in where oer+MySQL would
+  sometimes get stuck in the server registration phase
+- Added notice flood protection (how on earth have I
+  overlooked this one)
+- oer+MySQL would exit if it couldn't resolve the server
+  hostname, fixed
+- Changed gethostbyname() references to getaddrinfo()
+- ECONNRESET in connect() is no longer seen as a fatal error
+- Implemented reset autheds, requires global admin authorization
+- Implemented reset masks, requires global admin authorization
+  (Thanks must go to Refic)
+- cleanautheds() would flood shared bots if more than one
+  authed was cleaned, fixed
+- Updated copyright strings to include year 2004
+
+1.0-41
+------
+
+- The PART message has changed in ircu (the Undernet ircd)
+  and it's derivatives (which include for example the ircd
+  used in QuakeNet) -- Until I sort out whether this is
+  indeed a bug or a known change in the newer ircu's here
+  is a fix for it
+  (Thanks must go to Emperor)
+- Added uptime in seconds to CTCP VERSION
+- Logoff didn't support multiple arguments, fixed
+- Updated copyright strings to include 2003
+- Added IPv6 support
+  (Initial patch provided by Rakkis / MadQon, Thanks!)
+- edit and del chankey returned nothing to the user, fixed
+- dop, devoice, op and voice didn't check that the target
+  nick was on channel before issuing the MODE, fixed
+
+1.0-40
+------
+
+- A major oversight happened in -38 when I rewrote the
+  authentication checks in parse.c, fixed
+  (Thanks must go to Emperor)
+
+1.0-39
+------
+
+- clearbans no longer removes permbans
+  (Thanks must go to many out there, refic for reminding me)
+- There was a typo in requestop, fixed (4 -> 5)
+  (Thanks must go to Jase)
+- Increased the maximum length of a single topic from 160
+  to 250 characters, maximum number of topics is still 20
+  (Thanks must go to Jase)
+- There was a bug in the topic parser, fixed
+  (Thanks must go to Jase)
+- edit server was broken, fixed
+  (Thanks must go to Renzo)
+- jump didn't work as expected, fixed
+- Fixed several commands which would eventuelly at some point
+  corrupt their linked list structures:
+	+ delnickbks()
+	+ delwordbks()
+	+ deladmin()
+	+ deladminmask()
+	+ deluser()
+	+ delusermask()
+	+ deltrusted()
+	+ delservice()
+	+ delchannel()
+	+ deladverts()
+	+ delserver()
+	+ delchannelban()
+	+ timed_del()
+	+ mmode_del()
+	+ userleft()
+	+ cleanautheds()
+	+ freepubmsguser()
+	+ freenickchanges()
+- initmmodes() left the list non null, fixed
+- initmmodesfornick() left the list non null even if the
+  list became empty cause of the operation, fixed
+- Did some code clean up
+- The change in -38 which makes oer+MySQL assume that a user
+  which has @ also haves +v was broken, fixed
+  (Thanks must go to Emperor)
+- There were some issues with the detection of a broken
+  database connection, fixed
+- The manual reconnection to a database wasn't functioning
+  properly, fixed
+- You can now specify the full path of the config with -f
+  (increased the length of the variable)
+- validateflags() sometimes returned bogus values, fixed
+- oer_doquery() no longer logs the MySQL execution times,
+  the change was necessary due to a MySQL limitation (if
+  output logging was switched on it would result to a
+  "Commands out of sync" error message, the other way to
+  fix this would be to have a second database connection
+  just for output logging, IMO it's not worth it)
+- Added global flag "S" to allow a shared oer+MySQL setup
+  (in other words you will need to set global flag "S" to
+  all your shared oer+MySQL beginning with this version if
+  you require a shared setup, default is off)
+- Topic delete now allows you to delete several topics
+  at a time, for example "!td 2 5 7"
+  (Thanks must go to refic)
+- Removed the annoying "channel key is now.." and "deleted
+  channel key from.." messages
+  (Thanks must go to Renzo)
+- Removed the custom isnumber() function (oer+MySQL wouldn't
+  compile on FreeBSD)
+  (Thanks must go to Trollo)
+- Added SYNCGUIDE which you should read if you plan to
+  implement a shared oer+MySQL setup
+- Now admins and users can be fetched from a different
+  database/MySQL installation (see SYNCGUIDE)
+- tools/changeident.pl and tools/delident.pl were missing
+  oer_ext table, fixed
+- Added tools/delsyncdata.pl
+- A friend (user flag "f") is now also allowed to use prohibited
+  nicks, was the only thing a friend wasn't allowed to do
+  (Thanks must go to Renzo)
+
+1.0-38
+------
+
+- Added a timer to adverts just like with on join quotes,
+  adverts on a busy channel were sent to each person that
+  joined the channel, everytime (would cause "Target changing
+  too fast" errors on heavy loaded bots and lead to adverts
+  dissapearing)
+- Added a chaninfo command (has also "s" chanflag support)
+- sstats should now report correctly the IRC server name even
+  if connecting to a Round Robin hostname
+- Made a change in order for oer+MySQL to become more compatible
+  with oz.org (hopefully they fix the way they use ERR_BADPING)
+- oer+MySQL will from now on delete all not yet executed but
+  scheduled MODEs for any nick that leaves a channel for any
+  reason before the MODEs in question get executed
+  (Thanks must go to Mauri Kinnunen)
+- From now on when oer+MySQL detects a nick change oer+MySQL will
+  re-target all pending MODEs for that nick to the new nick
+  (Thanks must go to Mauri Kinnunen)
+- There was a major oversight in how oer+MySQL sometimes parsed
+  multi MODEs sent by the IRC server, fixed
+  (Thanks must go to Renzo)
+- Permbans weren't always synced after multi MODEs, fixed
+- oer+MySQL refused to ban itself on a channel even if chanflag "b"
+  wasn't set, fixed
+  (Thanks must go to Mauri Kinnunen)
+- oer+MySQL will now detect if Q leaves the network and will
+  re-auth itself once Q re-joins the network
+  (Thanks must go to Mauri Kinnunen)
+- Implemented the first batch of type/value checking of user
+  input values
+  (Thanks must go to Mauri Kinnunen)
+- Preliminary support for static linking (use --enable-static)
+- oer+MySQL will now assume that users with +o also have +v and
+  check for +v if a +o user should loose their +o (oer+MySQL wasn't
+  seeing +v on users which had +o)
+  (Thanks must go to Mauri Kinnunen)
+- Rewrote most of the authentication checks in parse.c because
+  many commands were simply broken, I hope I didn't break too
+  much while doing so
+  (Thanks Renzo)
+- Removed some extra/non-necessary checks from parse.c
+- Added a queuestats command (has also "s" chanflag support)
+- From now on some basic network related error messages are
+  always linked in (and shown) regardless if you specify
+  --enable-debug or not
+- Rewrote the MySQL connection checks implemented in -37,
+  there was a huge error (oer+MySQL should now detect a
+  disconnected remote database and recover in time)
+
+1.0-37
+------
+
+- Removed the check for +m in flood protection (at least
+  QuakeNet lets a +v user talk even if banned)
+- Unban didn't unban +o users, fixed
+- oer+MySQL allowed auto rejoin & part rejoin banvars to
+  be 0 even if chanflag "r" was set, fixed
+- Added del chanmode command
+- Added user flag "n" which can be used to disallow someone
+  the right to give oer+MySQL commands (for instance this can
+  be used with bots to prevent missuse through those bots
+  with a say command)
+- Made messages more verbose in MySQL detection part of
+  configure
+- Added --enable-debianmysql to configure to allow
+  configure automatically detect MySQL in Debian
+- Fixed some issues with vhost
+- Added del vhost command
+- Fixed a major problem with mmodes and timeds (mmodes/timeds
+  could just vanish without being executed, Thanks must go to
+  Mauri Kinnunen)
+- oer+MySQL will from now on strip mIRC colors and control
+  characters when parsing a channel topic
+- The "reset" command introduced in -36 broke del adverts,
+  del nickbks and del wordbks (fixed)
+- Permbans weren't removed from the channel when they were
+  removed with the "reset" command, fixed
+- Added a MySQL connect timeout (pingfreq/2)
+- Since there isn't a proper query timeout in MySQL I wrapped
+  oer_doquery (which is used in all database queries) to use
+  dbping before invoking a database query to see if the
+  database is still alive
+- Signals were broken on newer Solaris versions (and have
+  been for a long time), fixed
+- Added support for signal SIGUSR1 which can be used to
+  increase the level of debugging (0..max and max->0)
+- If oer+MySQL couldn't join a channel because of IRC server
+  error 439, oer+MySQL will now retry joining the channel in
+  question after the amount of seconds specified by the IRC
+  server have elapsed
+- Did some tweaking to oer+MySQL version and copyright strings
+- Increased the length of ext's message part, it can now be
+  432 bytes in length assuming the IRC server will accept it
+
+1.0-36
+------
+
+- Database fixes: execute scripts/fix_36.sql before
+  running this version (adds the oer_ext table)
+- It was possible to add a flag multiple times with one
+  command, fixed (eg. edit chanflags oooooo)
+- If a channel had force-topic set (chanflag "t") and Q
+  was on channel with forcetopic, it would lead to a
+  battle, fixed (Q is allowed if q friendly mode is set
+  or q is set as a service)
+- If you set any of the banvars to 0, the ban in question
+  won't be set (if for example you don't want your users
+  to be banned for swearing set the bad word banvar to 0)
+- Did some autoconf/Makefile tweaking
+- list handles will now go through global admins also
+- Added delchannel.pl to tools directory
+- clonechannel has always been broken because it didn't
+  save the basic channel information to the database
+  (channel name, mode, key, limit and channel flags)
+- Added functionality for external information to be
+  displayed through oer+MySQL, see the online help for
+  command "ext" (ext has also "s" chanflag support)
+- Fixed several bugs relating to timestamps and database
+  based autheds (only relevant in shared oer+MySQL setups)
+- When validating any of the flags oer+MySQL didn't clear
+  the destination buffer which could lead to some problems
+  on some platforms, fixed
+- Added support for reconnecting to a mysql database
+  (explicit dbclose & dbconnect and implicit reconnection)
+- Updated BUGREPORTING (added a section for you lazy people)
+- Added "reset" command (see Online Help)
+
+1.0-35
+------
+
+- Database fixes: execute scripts/fix_35.sql before
+  running this version (database based autheds)
+- The ident column change (length 64 -> 20) introduced in -34
+  wasn't included in initial.sql, fixed (did some further
+  tweaking to initial.sql as well)
+- Added support for chanmodes +c/+C (a QuakeNet extension)
+- Updated the perl scripts in tools directory to reflect the
+  recent database changes
+- Added support for database based autheds, should make life
+  easier for those who run shared oer+MySQL setups
+- Forced logoff broke in -34, fixed
+- If changing a dynamic user to a static one, oer+MySQL will
+  from now on logoff the user automatically
+- ff2mysql.pl removed from tools directory, use upgrade.pl
+  from now on
+- Updated HELP
+- Manual logoff didn't work if channel had chanflag "x", fixed
+- Added '+' and '!' to allowed channel prefixes (RFC 2811)
+
+1.0-34
+------
+
+- Database fixes: execute scripts/fix_34.sql before
+  running this version (renamed all oer+MySQL tables to
+  oer_*, added ident columns to last & seen and decreased the
+  ident column length from 64 to 20)
+- Localized pattern matching, if you have some weird oer+MySQL
+  behaviour (bankicking even if there is not a exact wordbk
+  match etc), I suggest you test out this version
+- If a channel has the "G" chanflag set and a opped non-admin
+  user	triggers the flood protection, the user is now deopped
+  first then banned (and kicked in case of repeat flood)
+- To decrease the amount of network traffic in remote MySQL
+  situations, the timestamps are from now on checked each 10
+  seconds, not on each call of processenv()
+- There was a typo in clonechannel() which would lead to
+  passwords of dynamic users not being copied, fixed
+- Added changeident.pl to the tools directory
+- Made scripts in tools directory consistent (handle -> ident)
+- Updated HELP
+- wordbk's support now also exact matches (single words)
+- edit password can no longer be sent to a channel
+- Added a timeout to the registration phase (timeout is 10
+  minutes after which oer+MySQL will connect to the next server)
+- For obvious reasons " can no longer be used as a prefix
+- The last command now encloses messages in "
+- oer+MySQL no longer permits a user from channel A to use it's
+  commands which require no channel parameter on channel B
+  (the only problem with the old behaviour was that a user
+  from channel A could flood channel B using oer+MySQL)
+- Internal dynamic admin (global flag "d") wasn't deleted
+  when disconnecting from a server, fixed
+- Added user flag "s" (special user, just like a service but for
+  a user), in a shared oer+MySQL environment you should set this
+  flag to your oer+MySQL user(s) to avoid op & do-op wars (because
+  of the polling change above, oer+MySQL doesn't always pick up
+  immediatly the new users)
+- Added a priority class for adverts, oer+MySQL should no longer
+  cause excess flood with many (more than 30) small (less
+  than 50 characters) adverts
+- Rewrote the way wordbk's are handled, from now on words
+  said by someone will be parsed word by word, not by sentence
+  (IMO, it makes more sense this way)
+- oer+MySQL didn't notice if it was kicked by a service, fixed
+- Fixed yet another nick change bug
+- I tested this version of oer+MySQL with muh 2.05d (a opensource
+  IRC bouncer http://mind.riot.org/muh) and it seems to
+  work, just remember to set the bouncer password as a server
+  password
+- In flood protection the +o/+v was given back before the ban
+  was removed, fixed
+- Changed "add channel" so that it takes now only one channel
+  and optionally chanflags (this way you can add inactive
+  channels and have oer+MySQL not join them)
+- Changed bot handle to bot ident in pre_install.sh
+- Basic support for a telnet proxy (specify the proxy string
+  in "make install" or use "edit proxysetup" while oer+MySQL is
+  running)
+- Forced logons didn't work anymore with /msg, fixed
+- There were also some other issues with autheds, fixed
+- The channel modes weren't set on a channel created with
+  clonechannel, fixed
+- After a logoff no channel sync was done, fixed
+
+1.0-33
+------
+
+- On startup oer+MySQL will no longer join all channels in
+  parallel, it will from now on wait until it has actually
+  joined the channel before joining another one (should cause
+  less flood if there are more than 10 channels to join)
+- Since -30 you could no longer set the global flag "o" to
+  enable output logging, fixed
+- Updated BUGREPORTING to correctly list the steps in enabling
+  output logging
+- If get'n'keep (global flag "g") nick is set, oer+MySQL will no
+  longer attempt to get it's primary nick until it has joined all
+  it's channels (in some rare circumstances oer+MySQL would get
+  confused about it's nick)
+- Added upgrade.pl to the tools directory, should make upgrading
+  from oer to oer+MySQL even easier
+- The logging of output messages is now enabled for initenv()
+  to provide me with more information in case of bug reports
+- Added command line option -a so that you can specify which
+  ident is to be used in querying the database for admins, from
+  this version on you will have to specify both -a <ident> and
+  -u <ident> to get the old behaviour
+- Added adminmove.pl and usermove.pl to the tools directory
+  (use these scripts to move admins or users from one oer+MySQL
+  ident to another)
+- I made a typo in -32 that broke autheds for dynamic admins and
+  channels without "x", fixed
+- Specifying a reason to "add permban" works again
+- Only global admins could force a logon, fixed
+- Fixed requestop rule #1 (nicks 4 -> 5) and furthermore channels
+  with more than 20 users are no longer automatically handled
+
+1.0-32
+------
+
+- Added 5 scripts into the tools directory which should make
+  it easier for you to move from oer to oer+MySQL, see the
+  README in the tools directory (they might or might not do
+  what you want)
+- Changed CTCP replies to a lower priority, it should now be
+  safer to set the global flag "f"
+- Added chanflag "X" to disallow using of action and say by
+  non admins
+- If a dynamic admin or a user is deleted also autheds of that
+  admin or user (handle) must be deleted, fixed
+- There were several bugs relating to autheds and to the use
+  of the "x" chanflag, should be fixed now (Thanks must go to
+  Emperor| and QuakeNet's #Joensuu)
+- Characters are now properly escaped before passed on to MySQL
+  (there were some issues with at least the hyphen character)
+- Changed the way list channels works, from now on channels
+  that have a key, are secret or are hidden aren't shown if
+  the command was sent to a channel (if the command is sent
+  to oer+MySQL with /msg authorization checking will be done)
+- list channels also now shows if oer+MySQL has +o on the channel
+- Quit, massmessage and raw commands all dropped the first
+  parameter if it was a valid IRC channel, fixed
+- getserver() always scanned from top of the server list not
+  from the current server if one was set, fixed
+- requestop will now request op from O immediatly after joining
+  a opless channel or right after the channel becomes opless
+  (until now oer+MySQL would wait 300 seconds)
+- A dynamic admin can no longer be changed into a static one or
+  visa versa (use add admin)
+
+1.0-31
+------
+
+- Cosmetic: increased the string buffer in parsemsg() to get
+  rid of the annoying parse error ("..buffer too small..")
+- Fixed some database issues relating to shared users
+  (for example, clonechannel on the "slave" oer+MySQL would
+  fail)
+- Adding or deleting kick reasons with hyphens in them would
+  fail, fixed
+- Added support for QuakeNet's requestop feature, set chanflag
+  "R" to activate it (see QuakeNet's guide for more information)
+- oer+MySQL would falsely attempt to re-op users if chanflag
+  "D" was set but oer wasn't opped itself, fixed
+- if setlocale() failed carbage would be displayed, fixed
+- lock would sometimes kick before +i was set, fixed
+- lock would sometimes choose a nick that was already flagged
+  for kicking, fixed (could be a problem on lagged servers)
+- A inactive channel admin (user with "!" and "a" flags) is no
+  longer allowed to change own flags
+- Added a "cycle" command (useful to force oer+MySQL to leave
+  & join channel and in doing so reseting some internal variables)
+- locku didn't automatically unlock the channel after the last
+  user to be kicked was kicked, fixed
+- There was a bug in the get & keep nick feature which would
+  result in oer+MySQL doing userhost queries for itself endlessly
+  (the bug was quite hard to trigger though), fixed
+- The oer+MySQL state was overwritten on startup by a bogus
+  memset, fixed
+- Added bstats command for reporting some bot statistics
+- In a shared user database environment a sync is now forced
+  after admins or users get reloaded
+
+1.0-30
+------
+
+- list flags verbose was missing "n" flag, fixed
+- Made some code optimizations
+- Added a internal dynamic admin feature (global flag "d")
+  which allows you to control oer+MySQL from oer+MySQL's
+  userhost (meaning user@host, meaning ident + hostname)
+- Added usercopy command which allows you to copy users
+  within a channel or to another channel
+- Added edit server (you can change settings of the current
+  IRC server)
+- edit options admin allowed non protected admins to make
+  themselves/other admins protected, fixed
+- oer+MySQL will now check that flags given to add, del or
+  edit are valid
+- global flags wasn't sorted if altered with edit flags
+- Channel flag "x" had broken dynamic users/admins, fixed
+- Command prefix and nick couldn't be the same, fixed
+- Wrote support for channelbans (automatic detection,
+  listing and clearing of them)
+- There was a off by 1 error while choosing the kick reason
+- Updated all (C) strings to contain year 2002
+- When admins or users were reloaded in a >1 oer+MySQL setup
+  (or if the timestamp was increased manually) it could lead
+  to a situation where autheds would become invalid and would
+  eventually make oer+MySQL crash, fixed
+- clonechannel for a channel which had old type of logging
+  resulted in erroneous behaviour, fixed
+- Some cosmetic fixes relating to clearing of variables
+- list channels showed +p channels and channel keys to
+  everyone, fixed
+- There was a bug in pre_install.sh which made it impossible
+  to add additional oer+MySQL instances to a existing
+  database, fixed (for sharing users for example)
+- Rewrote oer+MySQL's channel flood protection routines
+
+1.0-29
+------
+
+- oer+MySQL will now only fallback to making USERHOST
+  queries, a WHO query is done on channel join
+- made some code cleanup relating to processenv()
+- oer+MySQL will now write a signoff message in case it
+  detects a stoned server (if you see a "stoned server"
+  signoff message, it probably means that the ping frequency
+  in the server setting is too small, you need to increase it)
+- Fixed chanflag "U" for last, seen, quote, and nstats
+- nstats was broken for join count if new logging (global
+  flag "n") introduced in -26 was set, fixed
+- "add flags" and "del flags" were doing exactly the same
+  thing as "edit flags", fixed
+- Fixed several issues with chanmode, chankey and
+  chanlimit (Thanks Renzo)
+- There was a very hard to find bug in multiple mode
+  processing that was introduced in -19, the bug would cause
+  unbans etc. not to be scheduled, fixed (Thanks Renzo,
+  Emperor| and Azo)
+- list floodvars listed nickflood expire twice, fixed
+
+1.0-28
+------
+
+- Database fixes: execute scripts/fix_28.sql before
+  running this version
+- Fixed add channel
+
+1.0-27
+------
+
+- Fixed a potential crash when changing nicks, this bug was
+  introduced in -25 (Thanks Renzo)
+- Updated BUGREPORTING
+- There was a lurking bug in the message parsing, fixed
+  (oer+MySQL would obey to commands even if there wasn't a
+  whitespace delimiting the prefix or nick name of oer and
+  the command)
+- add/del/edit chanflags was missing a channel sync, fixed
+- Improved security for "list adverts" (when sent to a
+  channel, oer+MySQL will check that there are no users that
+  shouldn't see the advert, if there are the advert won't
+  be shown)
+- Added chanflag "c" to disallow ACTIONS on channel
+
+1.0-26
+------
+
+- Database fixes: execute scripts/fix_26.sql before
+  running this version
+- There is now another way of doing last/seen logging
+  (set global flag "n" to activate it, all channels
+  will be logged into 2 tables so it will be less
+  performant but will be more administrativeable)
+- Fixed initial flooding of the console by processactions()
+  in debug mode
+- Decreased the default PRIVMSG/NOTICE barrier in
+  processactions() by one second
+- Changed oer+MySQL not to quote messages with "(c)"
+- oer+MySQL now displays the current server in sstats
+- Added a date command
+- Added the "V" chanflag (auto voice admins on join)
+- Removed the "(truncated)" from last command, as many
+  characters as possible is displayed from now on
+- Fixed several errors in "make install"
+- Made on-join quoting return better quotes
+- Added a UPGRADING text file describing what usually
+  needs to be done when upgrading from version to version
+- Fixed some Solaris/SunOS specific bugs, debug-mode
+  should work again on those platforms
+- oer+MySQL did not work with local channels, fixed (&unix)
+- Logons that are expired are now correctly detected as
+  soon as they expire
+- If oer+MySQL is given a erroneus altnick and the primary
+  nick is taken, oer+MySQL will use a random nick
+- Added channel flag "x" to tell oer+MySQL not to timeout
+  logons
+- If channel has "O" or "V" flags, dynamic admins are now
+  automatically opped or voiced on logon
+- Added chanlimit (works just like chankey)
+
+1.0-25
+------
+
+- Database fixes: execute scripts/fix_25.sql before
+  running this version
+- A response resulting from the deletion of a channel
+  wasn't sent to the channel being deleted, fixed
+- mysqlsafestr() simply failed if the destination buffer
+  didn't have enough room, fixed (now it copies upto)
+- There was a lurking bug in channel mode detection
+- A response resulting from the deletion of a channel
+  wasn't sent to the channel being deleted, fixed
+- oer+MySQL had problems parsing lines with very long words
+- One couldn't add a channel key if no channel modes had
+  been set, fixed
+- List flags now works the same way list chanflags does
+- Implemented add & del flags (works just like chanflags)
+- Added global flag "g" meaning get & keep nick (oer+MySQL
+  will register itself on the server with a alternative or
+  a random nick but will keep on trying to get it's primary
+  nick as long as necessary, works also "on the fly")
+- Added chanflag "t" to indicate you want a topic lock
+  (all topic changes should go through oer+MySQL)
+- On disconnect from the server not all of the internal
+  parameters were being reset, fixed
+- Added support for Q auth, see the Online Help for the
+  syntax (NOTICE! your Q password will be stored in plain
+  text, so extreme care should be taken)
+- The channel mode wasn't being set on rejoin, fixed
+- There was a longstanding bug where oer+MySQL wouldn't
+  respond to some commands from a global admin if no
+  channels had yet been defined
+- "make install" allows now adding of dynamic global admins
+- Adding & listing of both nickbk's and wordbk's work
+  now in the same way (both have a optional reason)
+- IRC REALNAME didn't allow >1 words, fixed
+- Added some additional checks for NULLs
+- Changed the way "lamers" are being picked on random ban,
+  random ban & kick and lock
+- Unified a bit the way nickbks and wordbks are being
+  handled in oer and oer+MySQL (you might want to reset
+  your nickbks and wordbks to get working kick reasons)
+- Fixed some minor memory leaks
+- Added channel flag "N" to indicate that oer should
+  consider only bot users with "o" as channel operators
+  (can be used together with "U" to make oer see channel
+  operators without user records as normal users)
+- Fixed oer from flooding itself with USERHOST queries on
+  channels with hundreds of users
+- Fixed list nicks to not cause excess flood on channels
+  with hundreds of users
+- Correct handling of the restricted connection indicator '^'
+- Changed the way "lamers" are being picked on random ban,
+  random ban & kick and lock
+- Removed the notice that one shouldn't remove oer's permbans
+- Fixed a memory leak in cleanautheds()
+- Bogus chanmodes were sometimes set when oer was opped and
+  there were unset chanmodes (or a chankey)
+- Changed all occurances of "lamer(s)" to "normal(s)"
+- Rewrote the server registration bits
+- Topic separator is now a #define in oer-common.h
+- Changed channelsync not to op/voice if channel doesn't
+  have "o"/"v" flag set
+- Added support for dynamic voice
+- oer+MySQL no longer stops parsing oer.conf if it
+  encountersa unparseable line
+- Implemented nick flood protection (chanflag "k", also see
+  the Online Help for the 2 new parameters to floodvars)
+- Added chanflag "s" as in "serve all" (with this flag
+  you can allow anyone on channel to use the following
+  commands: help, info, uptime, sstats, last, quote,
+  seen and nstats -- THINK BEFORE you set this flag, it
+  will allow anyone to cause flood to oer and the channel)
+- Added support for the remaining IRCNet user ID prefixes
+- Rewrote the command scheduling logic (and due to this
+  rewrital the wall command amongst others has been changed)
+- Not all CTCP's sent to a channel were checked for flood
+- Implemented nick flood protection (chanflag "k", also see
+  the Online Help for the 2 new parameters to floodvars)
+- Fixed the MAX CHANNEL detection (oer will now try to
+  rejoin a channel it couldn't join because of the maximum
+  channel limit)
+- There was a bug when syncing permbans, fixed
+
+1.0-24
+------
+
+- Added support for global admin passwords (works just
+  like with channel users, just obmit the channel)
+- NOTICE! Because of the above change you will have to
+  go through your configuration before running oer+MySQL
+  and see that no admin (in the admins table) has the
+  "d" flag set, otherwise you will be unable to admin
+  oer+MySQL because the admin has no password
+- Fixed a subtle bug when processing multiple modes
+- checkstoned will no longer be processed on startup
+- Fixed add server so that it really requires just the
+  hostname & port, other parameters are optional
+- There was another lurking bug in the authorization
+  checking, fixed
+- Now also oer+MySQL has default kickreasons (they are
+  inserted into database with "make install", you can
+  also insert them manually from scripts/kickreasons.txt)
+
+1.0-23
+------
+
+- Userhosts were being queried too fast on channel join
+- Rewrote code where floating point math was used
+- Added channel flag "M" and user flag "m" to prevent
+  normal users from adding, removing or changing their
+  hostmasks
+- oer didn't check for the "l" chanflag when the lock
+  command was issued by a non-admin user
+- Fixed also other issues with the lock command
+
+1.0-22
+------
+
+- Database fixes: execute scripts/fix_22.sql before
+  running this version
+- Topics were broken (fix_22.sql drops the PK from topics)
+- Added failure notice to most topic commands
+- delservice() was attempting to remove trusteds, fixed
+- Trusted and services (hosts) can now have wildcards
+- Fixed the op and deop commands
+- Fixed the order of KICK and MODE in !bk and !rbk
+- Fixed yet some MODE bugs (these all were introduced
+  in -20 when I changed the size of NICKLEN)
+- Fixed list channels to hide only +p & +s channels if
+  the user requesting the list isn't at least op on the
+  channel being listed
+- Made the oer main loop process actions even after
+  server I/O, should speed things up (not too much I hope)
+- Changed NICKLEN from 15 to 20
+
+1.0-21
+------
+
+- syncops() had a incorrect authorization check, fixed
+- The order of KICK and MODE in ban & kick was also fixed
+- When cycling a channel to gain ops the wait period
+  between rejoins was decreased from 10 to 1 second
+- Fixed the automatic synchronization that was called when
+  oer was opped
+- Fixed the service/server mode detection
+- A misplaced return caused services not to be loaded
+  on startup, fixed
+- Added a HELP file describing what YOU can do FOR ME
+- Fixed the "not a prototype" warnings for oer.c on Solaris
+
+1.0-20
+------
+
+- Database fixes: execute scripts/fix_20.sql before
+  running this version (I also fixed scripts/initial.sql)
+- Until now only 2 characters of prefix was saved to
+  database, fixed
+- The server list is now sorted in a FIFO manner (until
+  now it wasn't sorted at all)
+- Rewrote bits of pre_install.sh and fixed logging of
+  MySQL errors (questions default to 'N' now so that
+  you can use "make install" to copy over the oer+MySQL
+  binary and oer+MySQL.conf without making any changes
+  to your data)
+- In configure --with-mysql now defaults to /usr/local/mysql
+- Changed NICKLEN, USERLEN, HOSTLEN and USERHOSTLEN to
+  more realistic values (as reference I used Linux and
+  the Undernet derived ircu, if you need to increase
+  these to suit your needs, edit oer+MySQL-common.h)
+- Updated last_yourchannel.sql and seen_yourchannel.sql
+  in scripts directory (if you want performance you might
+  consider at least the latter, change from dynamic to fixed
+  length, involves manual steps in creating the table and
+  transfering the table contents)
+- updatelast() and updateseen() now first obtain a write
+  lock for the last/seen tables before inserting a new
+  record (this is a safety measure so you can for example
+  work in the background with myisamchk)
+- Decreased the wall delay from 5 to 2 seconds
+- When chanflags L or S are set, added or deleted a more
+  informative message is displayed
+- Support for !del channel without parameter(s) was removed
+- Added multiple parameter support for many commands,
+  see the Online help (marked with []...)
+- Listing autheds always listed all hostmasks for a authed
+  handle, added support for start position
+- showlast() and showseen() did no longer support common
+  wildcards ? and *, fixed
+- There were several authority check issues with the logon
+  and logoff commands, fixed
+- Failed database queries are now reported back to the user
+  from the add/del/edit commands
+- Fixed some database queries (floodvars, bantype, banvars,
+  permbans)
+- Changed the way permbans are added & displayed in oer+MySQL
+  (I dropped support for multiple bans on add permban but
+  added support for a ban reason, on list permbans also the
+  nick of the person who set the ban and the time when the
+  ban was set is displayed)
+
+1.0-19
+------
+
+- Did some code cleanup based on profiling information
+- Fixed clonechannel()
+- Database correction: execute scripts/fix_19.sql before
+  running this version (I also fixed scripts/initial.sql)
+- Renamed last_oer.sql and seen_oer.sql to
+  last_yourchannel.sql and to seen_yourchannel.sql in
+  order to avoid confusion amongst new oer+MySQL users
+- During "make install" in pre_install.sh a log file is
+  now being created (pre_install.log), this change should
+  make it easier to debug MySQL warnings/errors
+- Added a BUGREPORTING file that contains instructions on
+  how to send comprehensive bug reports
+- Implemented add & del chanflags (you just specify the
+  flags you want to set or remove, not the all of them)
+- Changed del channel command so that it allows you to
+  specify which channel to delete when sending the
+  command to the channel, see Online help
+- Updated INSTALL to reflect the requirement for MySQL
+  3.23.xx (there is no real reason oer+MySQL can't be
+  used with older MySQL versions, however the install
+  script assumes MyISAM table/index types & extensions)
+- Added devoice command
+- Restored multiple modes
+- Added support for services, this works just like
+  the Q friendly mode except you can have several hosts
+  (the global flag for services is "s")
+- Rewrote processenv() and some related functions
+- Added global flag "m" to make oer send messages
+  instead of notices (not preferred)
+- Added a TODO file (always first look at the TODO
+  before suggesting a new feature)
+- Removed the obsolete saveconf() since the settings in
+  oer+MySQL.conf should be edited directly (they take
+  effect when oer+MySQL is started)
+- The default for oer+MySQL is now to have no debug
+  messages, you will have to specify --enable-debug to
+  configure if you want the messages (the size reduction
+  of the optimized & striped binary vs. the binary with
+  the debug messages & symbols is about 70%)
+- Enabled the until now undocumented features "usersfrom"
+  and "state" as command line parameters -u and -t
+- Permbans weren't synced, fixed
+- Did some additional code cleanup
+- Topics weren't removed from the database when the
+  channel was deleted, fixed
+- Added a validity check when adding new channels
+- Fixed a bug in authorization checking (for example
+  if you had a "dfv" user with *@* and a bunch of
+  "o" users with their respective masks, the *@* mask
+  would get matched for the "o" users)
+- If the "d" flag was removed from a user the password
+  of that user wasn't removed from the database, fixed
+- There was a memory leak when deleting a user with
+  a password or removing the "d" flag from a user, fixed
+- Changed the way list chanflags works: you will from
+  now on have to specify "verbose" as a argument to
+  list chanflags if you want the verbose listing
+- Implemented server statistics (sstats)
+- The stoned server checking was obviously broken and
+  has always been (now only activity from server is
+  counted as activity -- you may have to change your
+  server ping frequencies to something more realistic,
+  see /trace <nick> for the server class then see
+  /stats y to see the respective Y: line, the ping
+  frequency is the 2nd parameter for the Y:line)
+
+1.0-18
+------
+
+- Database changes: execute scripts/fix_18.sql and
+  scripts/add_keys.sql in mysql before running this
+  version (scripts add consistency checks to tables)
+- Did some code cleanup to avoid compiler warnings
+- Added channel flag "D" to enable de-op protection of
+  bot users with at least "o" flag
+- Made linenoise to be a value from MIN..pingfreq (you
+  will have to increase the value from 1 to something
+  sensible like 10-30 if you don't want Excess Flood)
+- Made error reporting in initenv() better
+- Rewrote completely the scheduling of IRC commands to
+  be priority then time based (since this is the most
+  important part of oer, it will require a lot of testing
+  by you the users to find out all the possible problems)
+- Bumped up the amount of actions processed per loop from
+  1 to 2 (if you get Excess Floods, set the variable
+  OER_ACTIONS_PER_MAINLOOP in oer+MySQL-common.h to 1)
+- If the configured bantype can't be set (because
+  of trusted domains or conflicting hostmask with oer)
+  oer will now also try other ban types
+- Added a THANKS file that contains a list (not 100%
+  accurate, sorry!) of people that have in some way
+  contributed in the development and/or testing of oer+MySQL
+- Added clonechannel command
+- Made the combination of "d" and "f" user flags work
+
+1.0-17
+------
+
+- Fixed a longstanding bug where oer would take user@host
+  from the server as it's hostname instead of just the host
+- oer will now also use the user id returned by the server
+  instead of using the one in the config
+- Added a bantype setting for channels, see online help
+  (execute scripts/bantype.sql to create the table)
+- Added a "all" and a "user@host" type to adverts
+- vhost flag wasn't set on edit vhost, fixed
+- Did some code cleanup
+- oer incorrectly tried joining a channel waiting
+  OER_AUTO_REJOIN_TIME seconds in between joins (the
+  correct one is OER_DELAY_BETWEEN_REJOINS
+- Fixed a memory leak in setpassword()
+- Added --enable-profile to configure (enable this to get
+  profiling information which you can study with prof/gprof)
+- Decreased the default net join period from 30 to 15 seconds
+- last & seen will now accept a second argument specifying
+  how many entries to list (1..MAX)
+- Reverted the sort order for last & seen
+
+1.0-16
+------
+
+- Passwords for users with "d" flag weren't removed when
+  the user was deleted. This would lead to oer+MySQL failing
+  to start/reload users from database
+- The inactivity flag is now also displayed in list users
+- Fixed the time.h detection (especially Debian users
+  suffered from this oversight)
+- Channel admins can no longer add the "a" flag to other
+  users making them channel admins
+- List channels will now also list user count
+- Added edit usermode, edit user and edit vhost
+- All edit commands should now send a response
+- Unified a bit the logic how responses are sent on add,
+  edit, del and list commands
+
+1.0-15
+------
+
+- Improved configure to allow alternative paths for
+  the varios MySQL components (includes, libs and bins)
+- Improved the installation scripts
+- Fixed segmentation faults that were triggered on
+  platforms lacking snprintf() if empty server
+  passwords were passed to parseconf()
+- Brought Copyright strings up to date
+- Added support for ERR_UNAVAILRESOURCE (meaning if
+  oer received ERR_UNAVAILRESOURCE from server because
+  of netsplit or such, oer would fail)
+- In addition to the set prefix oer will also now obey
+  commands prefixed with it's active nick
+
+1.0-14
+------
+
+- First public release

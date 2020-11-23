@@ -1,0 +1,97 @@
+Quick steps for the impatient
+-----------------------------
+
+First make sure you are running the latest version (check also
+http://oer.equnet.org/testing). If so, then
+
+./configure --enable-debug
+make install
+./oer+MySQL -c
+
+oer+MySQL will now show debug messages on the screen. If your problem
+isn't solved, read on.
+
+First and most important
+------------------------
+
+Always get the latest version of oer+MySQL (released or in testing)
+and see if it works for you. If not, read on.
+
+There are total of 3 bug type categories, the procedure depends on
+what kind of bug you are dealing with. With all bug types you should
+always append the following information to E-mails:
+
+- oer+MySQL version (info command while oer+MySQL is running)
+- Operating system type & version (type "uname -a" in console)
+- Compiler type & version (type "gcc -v" or "cc -V" in console)
+- MySQL version ("mysqladmin version")
+
+With "Operational bug" and "Fatal bug" bug types also append
+
+- Database dump without data ("mysqldump -q -d")
+
+Archive, configure, compilation & installation bugs
+---------------------------------------------------
+
+If there is something wrong with the oer+MySQL archive, send an E-mail
+to equ@equnet.org with subject "oer+MySQL bug report: archive". In the
+message describe the problem in detail.
+
+If you think you have found a problem with "configure" send an E-mail
+to equ@equnet.org with subject "oer+MySQL bug report: configure" and
+attach the console output of "./configure", config.log and
+config.status into the E-mail.
+
+If there is a compiling warning or error send an E-mail to
+equ@equnet.org with subject "oer+MySQL bug report: compilation" and
+attach the console output into the E-mail.
+
+If there is a problem with the installation ("make install") send an
+E-mail to equ@equnet.org with subject "oer+MySQL bug report:
+installation" and attach pre_install.log and the console output into
+the E-mail.
+
+Operational bug
+---------------
+
+If you think oer+MySQL missbehaves in some way but doesn't crash, you
+will have to enable logging of console output and dump the contents of
+table "output" with mysqldump (with data). Configure oer+MySQL with
+"--enable-debug" and compile.  Enable the logging of output messages
+by setting global flag "o" either in "make install", directly with
+mysql (while oer+MySQL isn't running) or with /msg while oer+MySQL is
+running. Make oer+MySQL quit and verify that it did. Dump the "output"
+table with mysqldump (with data) and attach the database dump into the
+E-mail sent to equ@equnet.org with the subject "oer+MySQL bug report:
+operational".
+
+Fatal bug
+---------
+
+If oer+MySQL terminates unexpectedly ("crashes") proceed as follows.
+First off, configure oer+MySQL with the following options:
+
+"./configure --enable-debug"
+
+and compile. Then make sure that your command shell allows core dumps:
+
+limit coredumpsize 10000 (bash)
+ulimit -c 10000          (csh/tcsh)
+
+Enable the logging of output messages by setting global flag "o"
+either in "make install", directly with mysql (while oer+MySQL isn't
+running) or with /msg while oer+MySQL is running. After oer+MySQL has
+"crashed" dump the "output" table with mysqldump (with data) and start
+gdb with "gdb oer+MySQL core". Then get a backtrace by writing
+"bt". Send both, the database dump and the backtrace console output to
+equ@equnet.org with the subject "oer+MySQL bug report: fatal".
+
+Other types of bugs
+------------------- 
+
+If the bug or problem you are dealing with doesn't belong to any of
+the above bug categories, send a E-mail to equ@equnet.org with subject
+"oer+MySQL bug report: unknown" and describe the bug or problem in
+detail.
+
+        Thank you in advance
